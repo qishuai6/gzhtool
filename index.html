@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>排版神器</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="brand-logo">
+                <span class="brand-name"><span class="brand-char">排</span><span class="brand-char">版</span><span class="brand-dot">·</span><span class="brand-char">神</span><span class="brand-char">器</span></span>
+            </div>
+            <div class="brand-slogan">3s 搞定 · 即粘即用</div>
+        </header>
+
+        <main class="main-content">
+            <!-- 左侧输入区域 -->
+            <div class="input-section">
+                <!-- AI格式化助手 -->
+                <div class="ai-helper-title">右侧预览效果不满意（看不见）？只需3步就解决！</div>
+
+                <div class="ai-helper-box">
+                    <!-- 步骤1 -->
+                    <div class="ai-step">
+                        <div class="ai-step-number">1</div>
+                        <div class="ai-step-text">复制下面框里的文字发给豆包或deepseek</div>
+                    </div>
+                    <div class="ai-prompt-wrapper">
+                        <div class="ai-prompt-content" id="aiPromptText">请将我提供的内容，按照以下专用的结构进行整理排版：
+
+1. 【一级标题】：必须以"一、二、三……"开头。注意：编号后只能跟简短的标题文字（不超过20字），正文内容必须换行另起！
+2. 【二级标题】：必须以"（一）（二）（三）……"开头，规则同一级标题。
+3. 【三级标题】：必须以"1、2、3……"开头。
+4. 【列表项】：以"-"开头，适合罗列短句。
+5. 【段落】：不同内容块之间留一个空行，以便自动分段。
+6. 【处理规则】：
+   - 如果原文是大段文字，请你提炼出简短的"小标题"放在编号后，将原文作为正文放在下一行。
+   - 严格保留原文核心信息，不随意删减，但可以微调结构以适应上述层级。尽量使用上面前5点，保证文章的整体层次感清晰。
+7. 【绝对禁忌】：
+   - 严禁使用 Markdown 加粗符号（如 **粗体** ），直接输出纯文字。
+   - 严禁输出任何"好的"、"如下所示"等客套话或开场白。
+   - 严禁输出多个版本，只给一个最终结果。
+   - 此时此刻，你就是一个莫得感情的格式化机器，只输出结果。</div>
+                        <div class="btn-copy-container">
+                            <button class="btn-copy-prompt" onclick="copyPrompt(event)">复制提示词</button>
+                            <span class="prompt-hint">（专业提示词，直接复制即可，无需理解）</span>
+                        </div>
+                    </div>
+
+                    <!-- 步骤2 -->
+                    <div class="ai-step">
+                        <div class="ai-step-number">2</div>
+                        <div class="ai-step-text">把【你的原始文章】也发给豆包/deepseek</div>
+                    </div>
+
+                    <!-- 步骤3 -->
+                    <div class="ai-step">
+                        <div class="ai-step-number">3</div>
+                        <div class="ai-step-text">把豆包/deepseek整理好的文字粘到下方的【原始文本框】</div>
+                    </div>
+                </div>
+
+                <!-- 视觉引导箭头 -->
+                <div class="visual-guide-arrow">
+                    <div class="arrow-line"></div>
+                    <div class="arrow-tip">▼</div>
+                </div>
+
+                <div class="section-header">
+                    <h2>原始文本</h2>
+                    <button class="btn-clear" onclick="clearInput()">清空</button>
+                </div>
+                <textarea
+                    id="inputText"
+                    class="input-area"
+                    oninput="formatText()"
+                >一、欢迎使用公众号排版工具
+
+这是一个超简约的公众号自动排版工具，让你的文章瞬间变得专业美观。
+
+（一）核心功能
+
+本工具支持多种标题层级和丰富的格式化选项：
+
+1、智能识别标题层级
+只需要按照简单的规则输入文字，工具会自动识别并应用精美样式。
+
+2、一键复制粘贴
+排版完成后，点击右上角"复制到公众号"按钮，直接粘贴到公众号后台即可。
+
+3、多种精美模板
+我们提供了电商、科技、生活、金融、教育等多个分类的精美模板，满足不同场景需求。
+
+（二）使用说明
+
+- 一级标题：使用"一、二、三"
+- 二级标题：使用"（一）（二）（三）"
+- 三级标题：使用"1、2、3"
+- 列表项：使用"-"开头
+- 段落：空行自动分段
+
+二、开始使用
+
+现在就清空这段示例文字，粘贴你的内容，选择喜欢的模板，让排版变得简单又美好！</textarea>
+            </div>
+
+            <!-- 中间预览区域 -->
+            <div class="preview-section">
+                <div class="section-header">
+                    <h2>预览效果</h2>
+                    <button class="btn-copy" onclick="copyToClipboard()">复制到公众号</button>
+                </div>
+
+                <!-- 预览内容 -->
+                <div id="previewArea" class="preview-area">
+                    <p class="placeholder">左侧输入内容后，这里将显示排版效果...</p>
+                </div>
+            </div>
+
+            <!-- 右侧样式选择区域 -->
+            <div class="style-selector">
+                <div class="section-header">
+                    <h2>选择样式</h2>
+                </div>
+
+                <!-- 样式选择器 -->
+                <div class="style-select-wrap">
+                    <label class="select-label">分类</label>
+                    <select id="categorySelect" class="style-select"></select>
+                </div>
+                <div class="style-select-wrap">
+                    <label class="select-label">模板</label>
+                    <select id="templateSelect" class="style-select"></select>
+                </div>
+
+                <!-- 底部提示 -->
+                <div class="style-update-notice">
+                    <p>更多样式持续更新中</p>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>© 2025 排版神器 · 轻量化 · 开源</p>
+        </footer>
+    </div>
+
+    <!-- 模板加载器 -->
+    <script src="templates/index.js"></script>
+
+    <!-- 简约专业模板 -->
+    <script src="templates/simple-professional/modern-business.js"></script>
+    <script src="templates/simple-professional/minimal-line.js"></script>
+    <script src="templates/simple-professional/card-border.js"></script>
+    <script src="templates/simple-professional/geometric-block.js"></script>
+    <script src="templates/simple-professional/fresh-green-optimized.js"></script>
+
+    <!-- 视觉平衡模板 -->
+    <script src="templates/visual-balance/fresh.js"></script>
+    <script src="templates/visual-balance/vibrant-orange.js"></script>
+    <script src="templates/visual-balance/creative-carnival.js"></script>
+    <script src="templates/visual-balance/gradient-duo.js"></script>
+    <script src="templates/visual-balance/sidebar-stripe.js"></script>
+
+    <!-- 丰富装饰模板 -->
+    <script src="templates/rich-decoration/emoji-festival.js"></script>
+    <script src="templates/rich-decoration/modern-tech.js"></script>
+    <script src="templates/rich-decoration/cyber-neon.js"></script>
+    <script src="templates/rich-decoration/artistic-frame.js"></script>
+    <script src="templates/rich-decoration/emoji-bubble.js"></script>
+    <script src="templates/rich-decoration/new-year-festival.js"></script>
+    <script src="templates/rich-decoration/china-chic.js"></script>
+    <script src="templates/rich-decoration/royal-red-gold.js"></script>
+    <script src="templates/rich-decoration/vitality-warm-yellow.js"></script>
+    <script src="templates/rich-decoration/tech-business-blue.js"></script>
+
+    <!-- 创意大胆模板 -->
+    <script src="templates/creative-bold/academic-report.js"></script>
+    <script src="templates/creative-bold/vibrant-orange-bold.js"></script>
+
+    <!-- 模板加载辅助 -->
+    <script src="templates/loader-helper.js"></script>
+
+    <!-- 应用逻辑 -->
+    <script src="js/formatter.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
