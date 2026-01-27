@@ -202,6 +202,31 @@
      * 复制到公众号
      */
     window.copyToClipboard = function () {
+        // 检查是否可以使用
+        if (window.authCheckCanUse) {
+            var checkResult = window.authCheckCanUse();
+
+            if (!checkResult.canUse) {
+                // 需要验证，显示验证条
+                if (window.authShowBar) {
+                    window.authShowBar();
+                }
+                showToast('🔒', '需要验证码', '免费使用次数已用完，请输入验证码继续使用');
+                return;
+            }
+
+            // 如果是免费使用，增加使用次数并提示剩余次数
+            if (checkResult.reason === 'free') {
+                if (window.authIncrementUsage) {
+                    window.authIncrementUsage();
+                }
+                var remaining = checkResult.remaining - 1;
+                if (remaining > 0) {
+                    console.log('剩余免费次数：' + remaining);
+                }
+            }
+        }
+
         var previewEl = document.getElementById('previewArea');
         if (!previewEl) return;
 
@@ -226,7 +251,7 @@
                     'text/plain': textBlob
                 });
                 navigator.clipboard.write([item]).then(function () {
-                    showToast('OK', '复制成功', '请打开公众号后台，直接 Ctrl+V 粘贴即可');
+                    showCopySuccessMessage();
                 }).catch(function () {
                     fallbackCopy();
                 });
@@ -240,10 +265,26 @@
         selection.removeAllRanges();
     };
 
+    function showCopySuccessMessage() {
+        var message = '请打开公众号后台，直接 Ctrl+V 粘贴即可';
+
+        // 检查是否需要提示剩余次数
+        if (window.authCheckCanUse) {
+            var checkResult = window.authCheckCanUse();
+            if (checkResult.reason === 'free' && checkResult.remaining <= 1 && checkResult.remaining > 0) {
+                message = '还剩 ' + checkResult.remaining + ' 次免费使用机会。之后需要验证码';
+            } else if (checkResult.reason === 'free' && checkResult.remaining === 0) {
+                message = '这是最后一次免费使用。下次需要验证码';
+            }
+        }
+
+        showToast('OK', '复制成功', message);
+    }
+
     function fallbackCopy() {
         try {
             document.execCommand('copy');
-            showToast('OK', '复制成功', '请打开公众号后台，直接 Ctrl+V 粘贴即可');
+            showCopySuccessMessage();
         } catch (e) {
             showToast('--', '复制失败', '请手动选择预览区内容进行复制');
         }
@@ -342,6 +383,9 @@
             if (toast && toast.parentNode) toast.remove();
         }, 300);
     }
+
+    // 导出 showToast 供其他模块使用
+    window.showToast = showToast;
 
     // 初始化
     if (document.readyState === 'loading') {

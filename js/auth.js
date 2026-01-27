@@ -13,22 +13,16 @@
     };
 
     var AUTH_STORAGE_KEY = 'gzhtool_auth';
+    var USAGE_STORAGE_KEY = 'gzhtool_usage';
+    var FREE_USAGE_LIMIT = 3; // 免费使用次数
 
     /**
      * 初始化验证检查
      */
     function initAuth() {
-        var authData = getAuthData();
-
-        if (authData && isAuthValid(authData)) {
-            // 验证有效，隐藏验证条
-            hideAuthBar();
-            unlockInterface();
-        } else {
-            // 验证无效或不存在，显示验证条
-            showAuthBar();
-            lockInterface();
-        }
+        // 页面加载时隐藏验证条，不锁定界面
+        hideAuthBar();
+        unlockInterface();
     }
 
     /**
@@ -41,6 +35,68 @@
         } catch (e) {
             return null;
         }
+    }
+
+    /**
+     * 获取使用次数
+     */
+    function getUsageCount() {
+        try {
+            var count = localStorage.getItem(USAGE_STORAGE_KEY);
+            return count ? parseInt(count, 10) : 0;
+        } catch (e) {
+            return 0;
+        }
+    }
+
+    /**
+     * 增加使用次数
+     */
+    function incrementUsageCount() {
+        var count = getUsageCount();
+        count++;
+        try {
+            localStorage.setItem(USAGE_STORAGE_KEY, count.toString());
+        } catch (e) {
+            // 忽略错误
+        }
+        return count;
+    }
+
+    /**
+     * 检查是否可以使用（验证或免费次数）
+     * 返回 { canUse: boolean, reason: string, remaining: number }
+     */
+    function checkCanUse() {
+        var authData = getAuthData();
+
+        // 如果已验证且有效，可以无限使用
+        if (authData && isAuthValid(authData)) {
+            return {
+                canUse: true,
+                reason: 'verified',
+                remaining: -1 // -1 表示无限
+            };
+        }
+
+        // 检查免费次数
+        var usageCount = getUsageCount();
+        var remaining = FREE_USAGE_LIMIT - usageCount;
+
+        if (remaining > 0) {
+            return {
+                canUse: true,
+                reason: 'free',
+                remaining: remaining
+            };
+        }
+
+        // 需要验证
+        return {
+            canUse: false,
+            reason: 'need_verify',
+            remaining: 0
+        };
     }
 
     /**
@@ -128,6 +184,11 @@
         setTimeout(function () {
             hideAuthBar();
             unlockInterface();
+
+            // 提示用户可以无限使用
+            if (window.showToast) {
+                window.showToast('✓', '验证成功', '您现在可以无限制使用复制功能了！');
+            }
         }, 1000);
     }
 
@@ -237,6 +298,16 @@
 
     // 导出全局函数
     window.verifyCode = verifyCode;
+    window.authCheckCanUse = checkCanUse;
+    window.authIncrementUsage = incrementUsageCount;
+    window.authShowBar = function() {
+        showAuthBar();
+        lockInterface();
+    };
+    window.authHideBar = function() {
+        hideAuthBar();
+        unlockInterface();
+    };
 
     // 页面加载时初始化
     if (document.readyState === 'loading') {
