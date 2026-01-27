@@ -7,6 +7,17 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <!-- 验证条 -->
+    <div id="authBar" class="auth-bar">
+        <div class="auth-content">
+            <span class="auth-icon">🔒</span>
+            <span class="auth-text">请输入访问码使用本工具</span>
+            <input type="text" id="authInput" class="auth-input" placeholder="XXXX-XXXX-XXXX">
+            <button class="auth-btn" onclick="verifyCode()">验证</button>
+            <span id="authError" class="auth-error"></span>
+        </div>
+    </div>
+
     <div class="bg-grid"></div>
     <div class="container">
         <header>
@@ -139,6 +150,10 @@
             <p>© 2025 排版神器 · 轻量化 · 开源</p>
         </footer>
     </div>
+
+    <!-- 验证码系统 -->
+    <script src="js/auth-codes.js"></script>
+    <script src="js/auth.js"></script>
 
     <!-- 模板加载器 -->
     <script src="templates/index.js"></script>
