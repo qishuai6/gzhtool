@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <div class="bg-grid"></div>
     <div class="container">
         <header>
             <div class="brand-logo">
@@ -16,10 +17,10 @@
         </header>
 
         <main class="main-content">
-            <!-- 左侧输入区域 -->
-            <div class="input-section">
+            <!-- MODULE 1: 原始文本输入 -->
+            <section class="module input-section">
                 <!-- AI格式化助手 -->
-                <div class="ai-helper-title">右侧预览效果不满意（看不见）？只需3步就解决！</div>
+                <div class="ai-helper-title">预览效果不满意（看不见）？只需3步就解决！</div>
 
                 <div class="ai-helper-box">
                     <!-- 步骤1 -->
@@ -88,7 +89,7 @@
 只需要按照简单的规则输入文字，工具会自动识别并应用精美样式。
 
 2、一键复制粘贴
-排版完成后，点击右上角"复制到公众号"按钮，直接粘贴到公众号后台即可。
+排版完成后，点击"复制到公众号"按钮，直接粘贴到公众号后台即可。
 
 3、多种精美模板
 我们提供了电商、科技、生活、金融、教育等多个分类的精美模板，满足不同场景需求。
@@ -104,10 +105,24 @@
 二、开始使用
 
 现在就清空这段示例文字，粘贴你的内容，选择喜欢的模板，让排版变得简单又美好！</textarea>
-            </div>
+            </section>
 
-            <!-- 中间预览区域 -->
-            <div class="preview-section">
+            <!-- MODULE 2: 风格选择 -->
+            <section class="module style-section">
+                <div class="section-header">
+                    <h2>选择样式</h2>
+                    <span class="style-update-notice">更多样式持续更新中</span>
+                </div>
+
+                <!-- 分类 tab 按钮组 -->
+                <div class="category-tabs" id="categoryTabs"></div>
+
+                <!-- 模板 chip 按钮组 -->
+                <div class="template-chips" id="templateChips"></div>
+            </section>
+
+            <!-- MODULE 3: 预览效果 -->
+            <section class="module preview-section">
                 <div class="section-header">
                     <h2>预览效果</h2>
                     <button class="btn-copy" onclick="copyToClipboard()">复制到公众号</button>
@@ -115,31 +130,9 @@
 
                 <!-- 预览内容 -->
                 <div id="previewArea" class="preview-area">
-                    <p class="placeholder">左侧输入内容后，这里将显示排版效果...</p>
+                    <p class="placeholder">上方输入内容后，这里将显示排版效果...</p>
                 </div>
-            </div>
-
-            <!-- 右侧样式选择区域 -->
-            <div class="style-selector">
-                <div class="section-header">
-                    <h2>选择样式</h2>
-                </div>
-
-                <!-- 样式选择器 -->
-                <div class="style-select-wrap">
-                    <label class="select-label">分类</label>
-                    <select id="categorySelect" class="style-select"></select>
-                </div>
-                <div class="style-select-wrap">
-                    <label class="select-label">模板</label>
-                    <select id="templateSelect" class="style-select"></select>
-                </div>
-
-                <!-- 底部提示 -->
-                <div class="style-update-notice">
-                    <p>更多样式持续更新中</p>
-                </div>
-            </div>
+            </section>
         </main>
 
         <footer>

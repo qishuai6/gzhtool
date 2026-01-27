@@ -3,6 +3,7 @@
  */
 (function () {
     var currentTemplateId = null;
+    var currentCategoryId = null;
 
     /**
      * 初始化应用
@@ -13,65 +14,111 @@
     }
 
     /**
-     * 构建样式选择下拉框
+     * 构建样式选择 tab/chip 按钮
      */
     function buildStyleSelects() {
-        var catSelect = document.getElementById('categorySelect');
-        var tmplSelect = document.getElementById('templateSelect');
-        if (!catSelect || !tmplSelect) return;
+        var tabsContainer = document.getElementById('categoryTabs');
+        var chipsContainer = document.getElementById('templateChips');
+        if (!tabsContainer || !chipsContainer) return;
 
         var categories = window.TemplateRegistry.getCategories();
 
-        // 填充分类
+        // 构建分类 tab 按钮
         for (var i = 0; i < categories.length; i++) {
             var cat = categories[i];
             var templates = window.TemplateRegistry.getByCategory(cat.id);
             if (templates.length === 0) continue;
-            var opt = document.createElement('option');
-            opt.value = cat.id;
-            opt.textContent = cat.name;
-            catSelect.appendChild(opt);
+
+            var tab = document.createElement('button');
+            tab.className = 'category-tab';
+            tab.textContent = cat.name;
+            tab.setAttribute('data-category', cat.id);
+
+            tab.addEventListener('click', (function (categoryId) {
+                return function () {
+                    selectCategory(categoryId);
+                };
+            })(cat.id));
+
+            tabsContainer.appendChild(tab);
         }
 
-        // 监听分类变化
-        catSelect.addEventListener('change', function () {
-            populateTemplates(catSelect.value);
-        });
-
-        // 监听模板变化
-        tmplSelect.addEventListener('change', function () {
-            currentTemplateId = tmplSelect.value;
-            formatText();
-        });
-
-        // 默认填充第一个分类的模板
-        if (catSelect.options.length > 0) {
-            populateTemplates(catSelect.options[0].value);
+        // 默认选中第一个分类
+        var firstTab = tabsContainer.querySelector('.category-tab');
+        if (firstTab) {
+            var firstCatId = firstTab.getAttribute('data-category');
+            selectCategory(firstCatId);
         }
     }
 
     /**
-     * 根据分类填充模板下拉框
+     * 选中分类
+     */
+    function selectCategory(categoryId) {
+        currentCategoryId = categoryId;
+
+        // 更新 tab 激活态
+        var tabs = document.querySelectorAll('.category-tab');
+        for (var i = 0; i < tabs.length; i++) {
+            if (tabs[i].getAttribute('data-category') === categoryId) {
+                tabs[i].classList.add('active');
+            } else {
+                tabs[i].classList.remove('active');
+            }
+        }
+
+        // 填充模板 chips
+        populateTemplates(categoryId);
+    }
+
+    /**
+     * 根据分类填充模板 chip 按钮
      */
     function populateTemplates(categoryId) {
-        var tmplSelect = document.getElementById('templateSelect');
-        if (!tmplSelect) return;
+        var chipsContainer = document.getElementById('templateChips');
+        if (!chipsContainer) return;
 
-        tmplSelect.innerHTML = '';
+        chipsContainer.innerHTML = '';
         var templates = window.TemplateRegistry.getByCategory(categoryId);
 
         for (var i = 0; i < templates.length; i++) {
-            var opt = document.createElement('option');
-            opt.value = templates[i].id;
-            opt.textContent = templates[i].name;
-            tmplSelect.appendChild(opt);
+            var chip = document.createElement('button');
+            chip.className = 'template-chip';
+            chip.textContent = templates[i].name;
+            chip.setAttribute('data-template', templates[i].id);
+
+            chip.addEventListener('click', (function (templateId) {
+                return function () {
+                    selectTemplate(templateId);
+                };
+            })(templates[i].id));
+
+            chipsContainer.appendChild(chip);
         }
 
         // 选中第一个模板
-        if (tmplSelect.options.length > 0) {
-            currentTemplateId = tmplSelect.options[0].value;
-            formatText();
+        if (templates.length > 0) {
+            selectTemplate(templates[0].id);
         }
+    }
+
+    /**
+     * 选中模板
+     */
+    function selectTemplate(templateId) {
+        currentTemplateId = templateId;
+
+        // 更新 chip 激活态
+        var chips = document.querySelectorAll('.template-chip');
+        for (var i = 0; i < chips.length; i++) {
+            if (chips[i].getAttribute('data-template') === templateId) {
+                chips[i].classList.add('active');
+            } else {
+                chips[i].classList.remove('active');
+            }
+        }
+
+        formatText();
     }
 
     /**
@@ -86,14 +133,14 @@
         var rawText = inputEl.value;
 
         if (!rawText || !rawText.trim()) {
-            previewEl.innerHTML = '<p class="placeholder">左侧输入内容后，这里将显示排版效果...</p>';
+            previewEl.innerHTML = '<p class="placeholder">上方输入内容后，这里将显示排版效果...</p>';
             return;
         }
 
         var elements = window.Formatter.parse(rawText);
 
         if (elements.length === 0) {
-            previewEl.innerHTML = '<p class="placeholder">左侧输入内容后，这里将显示排版效果...</p>';
+            previewEl.innerHTML = '<p class="placeholder">上方输入内容后，这里将显示排版效果...</p>';
             return;
         }
 
@@ -160,7 +207,7 @@
 
         var content = previewEl.querySelector('.wechat-content');
         if (!content) {
-            showToast('--', '暂无内容', '请先在左侧输入文本内容');
+            showToast('--', '暂无内容', '请先在上方输入文本内容');
             return;
         }
 
