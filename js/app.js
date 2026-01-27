@@ -302,6 +302,23 @@
     };
 
     /**
+     * 复制微信号
+     */
+    window.copyWechat = function () {
+        var wechatId = 'uxqishuai';
+
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(wechatId).then(function () {
+                showToast('✓', '复制成功', '微信号 ' + wechatId + ' 已复制到剪贴板');
+            }).catch(function () {
+                fallbackCopyText(wechatId);
+            });
+        } else {
+            fallbackCopyText(wechatId);
+        }
+    };
+
+    /**
      * 复制提示词
      */
     window.copyPrompt = function (event) {
