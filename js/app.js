@@ -302,20 +302,13 @@
     };
 
     /**
-     * 复制微信号
+     * 打开小红书主页
      */
-    window.copyWechat = function () {
-        var wechatId = 'uxqishuai';
+    window.openXiaohongshu = function () {
+        var xiaohongshuUrl = 'https://www.xiaohongshu.com/user/profile/607312980000000001005c49?xsec_token=YB9RhN3-FRWTpfsBSReIEukeEHMjB5xVd60pn5fT9HZG8%3D&xsec_source=app_share&xhsshare=&shareRedId=ODY5MzQ3PUE2NzUyOTgwNjY0OTc5SDpC&apptime=1769565449&share_id=5b3d1ad751c94c799c41520e423a6d0b&share_channel=copy_link';
 
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(wechatId).then(function () {
-                showToast('✓', '复制成功', '微信号 ' + wechatId + ' 已复制到剪贴板');
-            }).catch(function () {
-                fallbackCopyText(wechatId);
-            });
-        } else {
-            fallbackCopyText(wechatId);
-        }
+        window.open(xiaohongshuUrl, '_blank');
+        showToast('🔗', '正在跳转', '即将打开小红书主页');
     };
 
     /**
