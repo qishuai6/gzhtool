@@ -185,6 +185,11 @@
             hideAuthBar();
             unlockInterface();
 
+            // 更新预览区域复制状态
+            if (window.updatePreviewCopyState) {
+                window.updatePreviewCopyState();
+            }
+
             // 提示用户可以无限使用
             if (window.showToast) {
                 window.showToast('✓', '验证成功', '您现在可以无限制使用复制功能了！');

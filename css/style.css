@@ -353,6 +353,7 @@ button {
 
 /* ===== 预览区域 ===== */
 .preview-area {
+    position: relative;
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 12px;
     padding: 28px;
@@ -603,6 +604,24 @@ footer {
     padding: 20px;
     line-height: 1.8;
     color: #333;
+}
+
+/* 禁止复制状态 */
+.preview-area.no-copy {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.preview-area.no-copy::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
 }
 
 /* ===== 自定义滚动条（暗色） ===== */

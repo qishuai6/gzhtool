@@ -6,12 +6,55 @@
     var currentCategoryId = null;
 
     /**
+     * 更新预览区域的复制状态
+     */
+    function updatePreviewCopyState() {
+        var previewEl = document.getElementById('previewArea');
+        if (!previewEl) return;
+
+        if (window.authCheckCanUse) {
+            var checkResult = window.authCheckCanUse();
+            if (!checkResult.canUse) {
+                previewEl.classList.add('no-copy');
+            } else {
+                previewEl.classList.remove('no-copy');
+            }
+        }
+    }
+
+    /**
+     * 处理预览区域的复制事件
+     */
+    function handlePreviewCopy(e) {
+        if (window.authCheckCanUse) {
+            var checkResult = window.authCheckCanUse();
+            if (!checkResult.canUse) {
+                e.preventDefault();
+                if (window.authShowBar) {
+                    window.authShowBar();
+                }
+                showToast('🔒', '需要验证码', '免费使用次数已用完，请输入验证码继续使用');
+            }
+        }
+    }
+
+    /**
      * 初始化应用
      */
     function init() {
         buildStyleSelects();
         formatText();
+        updatePreviewCopyState();
+
+        // 监听预览区域的复制事件
+        var previewEl = document.getElementById('previewArea');
+        if (previewEl) {
+            previewEl.addEventListener('copy', handlePreviewCopy);
+        }
     }
+
+    // 导出更新复制状态函数供外部调用
+    window.updatePreviewCopyState = updatePreviewCopyState;
 
     /**
      * 构建样式选择 tab/chip 按钮
@@ -224,6 +267,10 @@
                 if (remaining > 0) {
                     console.log('剩余免费次数：' + remaining);
                 }
+                // 复制后更新预览区域状态（检查是否还有免费次数）
+                setTimeout(function() {
+                    updatePreviewCopyState();
+                }, 100);
             }
         }
 
